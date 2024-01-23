@@ -1,6 +1,5 @@
 package deque;
 
-import net.sf.saxon.expr.instruct.Copy;
 
 public class LinkedListDeque<T> {
 
