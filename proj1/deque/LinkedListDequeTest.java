@@ -133,4 +133,60 @@ public class LinkedListDequeTest {
             assertEquals("Should have the same value", i, (double) lld1.removeLast(), 0.0);
         }
     }
+
+    @Test
+    /* test iteration functionalities */
+    public void iterTest() {
+        LinkedListDeque<Integer> lld1 = new LinkedListDeque<>();
+        assertTrue(lld1.isEmpty());
+
+        for (int item : lld1) {
+            System.out.println(item);
+        }
+
+        for (int i = 0; i < 10; i++) {
+            lld1.addLast(i);
+        }
+
+        assertEquals(10, lld1.size());
+
+        int i = 0;
+        for (int item : lld1) {
+            assertEquals(item, i);
+            i++;
+        }
+    }
+
+    @Test
+    /* test deep equals */
+    public void equalsTest() {
+        LinkedListDeque<Integer> lld1 = new LinkedListDeque<>();
+        LinkedListDeque<Integer> lld2 = new LinkedListDeque<>();
+        LinkedListDeque<Integer> lld3 = new LinkedListDeque<>();
+
+        assertTrue(lld1.isEmpty());
+        assertTrue(lld2.isEmpty());
+        assertTrue(lld3.isEmpty());
+
+        for (int i = 0; i < 10; i++) {
+            lld1.addLast(i);
+            lld2.addLast(i);
+            lld3.addFirst(i);
+        }
+
+        assertEquals(10, lld1.size());
+        assertEquals(10, lld2.size());
+        assertEquals(10, lld3.size());
+
+        lld1.printDeque();
+        lld2.printDeque();
+        lld3.printDeque();
+
+        assertTrue(lld1.equals(lld1));
+        assertTrue(lld1.equals(lld2));
+        assertFalse(lld1.equals(lld3));
+        assertFalse(lld1.equals(1));
+        assertFalse(lld1.equals(null));
+        assertFalse(lld1.equals("fish"));
+    }
 }

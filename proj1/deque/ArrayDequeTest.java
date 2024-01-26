@@ -1,5 +1,6 @@
 package deque;
 
+import org.checkerframework.checker.units.qual.A;
 import org.junit.Test;
 
 import static org.junit.Assert.*;
@@ -133,5 +134,58 @@ public class ArrayDequeTest {
         for (double i = 999999; i > 500000; i--) {
             assertEquals("Should have the same value", i, (double) lld1.removeLast(), 0.0);
         }
+    }
+
+    @Test
+    /* test iteration functionalities */
+    public void iterTest() {
+        ArrayDeque<Integer> lld1 = new ArrayDeque<>();
+
+        assertTrue(lld1.isEmpty());
+
+        for (int i = 0; i < 10; i++) {
+            lld1.addLast(i);
+        }
+
+        assertEquals(10, lld1.size());
+
+        int i = 0;
+        for (int item : lld1) {
+            assertEquals(item, i);
+            i++;
+        }
+    }
+
+    @Test
+    /* test deep equals */
+    public void equalsTest() {
+        ArrayDeque<Integer> lld1 = new ArrayDeque<>();
+        ArrayDeque<Integer> lld2 = new ArrayDeque<>();
+        ArrayDeque<Integer> lld3 = new ArrayDeque<>();
+
+        assertTrue(lld1.isEmpty());
+        assertTrue(lld2.isEmpty());
+        assertTrue(lld3.isEmpty());
+
+        for (int i = 0; i < 10; i++) {
+            lld1.addLast(i);
+            lld2.addLast(i);
+            lld3.addFirst(i);
+        }
+
+        assertEquals(10, lld1.size());
+        assertEquals(10, lld2.size());
+        assertEquals(10, lld3.size());
+
+        lld1.printDeque();
+        lld2.printDeque();
+        lld3.printDeque();
+
+        assertTrue(lld1.equals(lld1));
+        assertTrue(lld1.equals(lld2));
+        assertFalse(lld1.equals(lld3));
+        assertFalse(lld1.equals(1));
+        assertFalse(lld1.equals(null));
+        assertFalse(lld1.equals("fish"));
     }
 }

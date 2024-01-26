@@ -1,6 +1,8 @@
 package deque;
 
-public class ArrayDeque<T> {
+import java.util.Iterator;
+
+public class ArrayDeque<T> implements Deque<T> {
 
     private int size;
     private int cap;
@@ -19,6 +21,7 @@ public class ArrayDeque<T> {
     /**
      * Adds an item of type T to the front of the deque. You can assume that item is never null.
      */
+    @Override
     public void addFirst(T item) {
         int newPos = this.first - 1;
         if (newPos < 0) {
@@ -42,6 +45,7 @@ public class ArrayDeque<T> {
     /**
      * Adds an item of type T to the back of the deque. You can assume that item is never null.
      */
+    @Override
     public void addLast(T item) {
         int newPos = (this.last + 1) % this.cap;
         if (newPos == this.first) {
@@ -72,15 +76,9 @@ public class ArrayDeque<T> {
     }
 
     /**
-     * Returns true if deque is empty, false otherwise.
-     */
-    public boolean isEmpty() {
-        return this.size == 0;
-    }
-
-    /**
      * Returns the number of items in the deque.
      */
+    @Override
     public int size() {
         return this.size;
     }
@@ -88,6 +86,7 @@ public class ArrayDeque<T> {
     /**
      * Prints the items in the deque from first to last, separated by a space. Once all the items have been printed, print out a new line.
      */
+    @Override
     public void printDeque() {
         if (this.isEmpty()) {
             System.out.println();
@@ -103,6 +102,7 @@ public class ArrayDeque<T> {
     /**
      * Removes and returns the item at the front of the deque. If no such item exists, returns null.
      */
+    @Override
     public T removeFirst() {
 
         if (this.isEmpty()) {
@@ -124,6 +124,7 @@ public class ArrayDeque<T> {
     /**
      * Removes and returns the item at the back of the deque. If no such item exists, returns null.
      */
+    @Override
     public T removeLast() {
 
         if (this.isEmpty()) {
@@ -145,19 +146,66 @@ public class ArrayDeque<T> {
     /**
      * Gets the item at the given index, where 0 is the front, 1 is the next item, and so forth. If no such item exists, returns null. Must not alter the deque!
      */
+    @Override
     public T get(int index) {
         return this.items[(this.first + index) % this.cap];
     }
-//
-//    /** The Deque objects we’ll make are iterable (i.e. Iterable<T>) so we must provide this method to return an iterator.
-//     */
-//    public Iterator<T> iterator() {
-//
-//    }
-//
-//    /** Returns whether or not the parameter o is equal to the Deque. o is considered equal if it is a Deque and if it contains the same contents (as goverened by the generic T’s equals method) in the same order. (ADDED 2/12: You’ll need to use the instance of keywords for this. Read here for more information)
-//     */
-//    public boolean equals(Object o){
-//        return false;
-//    }
+
+    /**
+     * The Deque objects we’ll make are iterable (i.e. Iterable<T>) so we must provide this method to return an iterator.
+     */
+    @Override
+    public Iterator<T> iterator() {
+        return new arrayDequeIter();
+    }
+
+    private class arrayDequeIter implements Iterator<T> {
+        int pos;
+
+        public arrayDequeIter() {
+            this.pos = 0;
+        }
+
+        @Override
+        public boolean hasNext() {
+            return this.pos < size;
+        }
+
+        @Override
+        public T next() {
+            if (this.hasNext()) {
+                return items[this.pos++];
+            }
+            return null;
+        }
+    }
+
+    /**
+     * Returns whether or not the parameter o is equal to the Deque. o is considered equal if it is a Deque and if it contains the same contents (as goverened by the generic T’s equals method) in the same order. (ADDED 2/12: You’ll need to use the instance of keywords for this. Read here for more information)
+     */
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) {
+            return true;
+        }
+        if (o == null || o.getClass() != this.getClass()) {
+            return false;
+        }
+
+        ArrayDeque<T> other = (ArrayDeque<T>) o;
+        if (other.size() != this.size) {
+            return false;
+        }
+
+        T item2;
+        Iterator<T> otherIter = other.iterator();
+        for (T item1 : this) {
+            item2 = otherIter.next();
+            if (!(item1.equals(item2))) {
+                return false;
+            }
+        }
+
+        return true;
+    }
 }
