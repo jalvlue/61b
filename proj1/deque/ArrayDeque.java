@@ -167,7 +167,7 @@ public class ArrayDeque<T> implements Deque<T>, Iterable<T> {
     }
 
     private class ArrayDequeIter implements Iterator<T> {
-        int pos;
+        private int pos;
 
         ArrayDequeIter() {
             this.pos = 0;
@@ -180,10 +180,10 @@ public class ArrayDeque<T> implements Deque<T>, Iterable<T> {
 
         @Override
         public T next() {
-            if (this.hasNext()) {
-                return items[this.pos++];
-            }
-            return null;
+            T item = get(this.pos);
+            this.pos++;
+
+            return item;
         }
     }
 
