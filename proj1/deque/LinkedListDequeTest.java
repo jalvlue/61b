@@ -163,6 +163,8 @@ public class LinkedListDequeTest {
         LinkedListDeque<Integer> lld1 = new LinkedListDeque<>();
         LinkedListDeque<Integer> lld2 = new LinkedListDeque<>();
         LinkedListDeque<Integer> lld3 = new LinkedListDeque<>();
+        ArrayDeque<Integer> ad1 = new ArrayDeque<>();
+        ArrayDeque<Integer> ad2 = new ArrayDeque<>();
 
         assertTrue(lld1.isEmpty());
         assertTrue(lld2.isEmpty());
@@ -172,6 +174,9 @@ public class LinkedListDequeTest {
             lld1.addLast(i);
             lld2.addLast(i);
             lld3.addFirst(i);
+
+            ad1.addLast(i);
+            ad2.addFirst(i);
         }
 
         assertEquals(10, lld1.size());
@@ -185,6 +190,10 @@ public class LinkedListDequeTest {
         assertTrue(lld1.equals(lld1));
         assertTrue(lld1.equals(lld2));
         assertFalse(lld1.equals(lld3));
+
+        assertTrue(lld1.equals(ad1));
+        assertFalse(lld1.equals(ad2));
+
         assertFalse(lld1.equals(1));
         assertFalse(lld1.equals(null));
         assertFalse(lld1.equals("fish"));

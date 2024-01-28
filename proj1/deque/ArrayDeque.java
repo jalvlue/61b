@@ -84,7 +84,8 @@ public class ArrayDeque<T> implements Deque<T>, Iterable<T> {
     }
 
     /**
-     * Prints the items in the deque from first to last, separated by a space. Once all the items have been printed, print out a new line.
+     * Prints the items in the deque from first to last, separated by a space.
+     * Once all the items have been printed, print out a new line.
      */
     @Override
     public void printDeque() {
@@ -137,14 +138,15 @@ public class ArrayDeque<T> implements Deque<T>, Iterable<T> {
 
         T res = this.items[this.last];
         this.items[this.last] = null;
-        this.last--;
+        this.last = (this.last - 1) % this.cap;
         this.size--;
 
         return res;
     }
 
     /**
-     * Gets the item at the given index, where 0 is the front, 1 is the next item, and so forth. If no such item exists, returns null. Must not alter the deque!
+     * Gets the item at the given index, where 0 is the front, 1 is the next item, and so forth.
+     * If no such item exists, returns null. Must not alter the deque!
      */
     @Override
     public T get(int index) {
@@ -152,17 +154,18 @@ public class ArrayDeque<T> implements Deque<T>, Iterable<T> {
     }
 
     /**
-     * The Deque objects we’ll make are iterable (i.e. Iterable<T>) so we must provide this method to return an iterator.
+     * The Deque objects we’ll make are iterable (i.e. Iterable<T>)
+     * so we must provide this method to return an iterator.
      */
     @Override
     public Iterator<T> iterator() {
-        return new arrayDequeIter();
+        return new ArrayDequeIter();
     }
 
-    private class arrayDequeIter implements Iterator<T> {
+    private class ArrayDequeIter implements Iterator<T> {
         int pos;
 
-        public arrayDequeIter() {
+        ArrayDequeIter() {
             this.pos = 0;
         }
 
@@ -181,27 +184,30 @@ public class ArrayDeque<T> implements Deque<T>, Iterable<T> {
     }
 
     /**
-     * Returns whether or not the parameter o is equal to the Deque. o is considered equal if it is a Deque and if it contains the same contents (as goverened by the generic T’s equals method) in the same order. (ADDED 2/12: You’ll need to use the instance of keywords for this. Read here for more information)
+     * Returns whether or not the parameter o is equal to the Deque.
+     * o is considered equal if it is a Deque and if it contains the same contents
+     * (as goverened by the generic T’s equals method) in the same order.
      */
     @Override
     public boolean equals(Object o) {
         if (this == o) {
             return true;
         }
-        if (o == null || o.getClass() != this.getClass()) {
+        if (!(o instanceof Deque)) {
             return false;
         }
 
-        ArrayDeque<T> other = (ArrayDeque<T>) o;
+        Deque<T> other = (Deque<T>) o;
         if (other.size() != this.size) {
             return false;
         }
 
-        T item2;
-        Iterator<T> otherIter = other.iterator();
-        for (T item1 : this) {
-            item2 = otherIter.next();
-            if (!(item1.equals(item2))) {
+        T item1, item2;
+        for (int i = 0; i < this.size; i++) {
+            item1 = this.get(i);
+            item2 = other.get(i);
+
+            if (!item1.equals(item2)) {
                 return false;
             }
         }
