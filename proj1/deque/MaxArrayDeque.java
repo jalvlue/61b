@@ -26,17 +26,17 @@ public class MaxArrayDeque<T> extends ArrayDeque<T> {
         }
     }
 
-    @Override
-    public void addLast(T item) {
-        super.addLast(item);
-        this.checkNewMax(item);
-    }
-
-    @Override
-    public void addFirst(T item) {
-        super.addFirst(item);
-        this.checkNewMax(item);
-    }
+//    @Override
+//    public void addLast(T item) {
+//        super.addLast(item);
+//        this.checkNewMax(item);
+//    }
+//
+//    @Override
+//    public void addFirst(T item) {
+//        super.addFirst(item);
+//        this.checkNewMax(item);
+//    }
 
     /**
      * helper function for calculate a maxItem with specific Comparator.
@@ -57,21 +57,21 @@ public class MaxArrayDeque<T> extends ArrayDeque<T> {
         return tmpMax;
     }
 
-    @Override
-    public T removeLast() {
-        T res = super.removeLast();
-        this.maxItem = this.calculateMax(this.comp);
-
-        return res;
-    }
-
-    @Override
-    public T removeFirst() {
-        T res = super.removeFirst();
-        this.maxItem = this.calculateMax(this.comp);
-
-        return res;
-    }
+//    @Override
+//    public T removeLast() {
+//        T res = super.removeLast();
+//        this.maxItem = this.calculateMax(this.comp);
+//
+//        return res;
+//    }
+//
+//    @Override
+//    public T removeFirst() {
+//        T res = super.removeFirst();
+//        this.maxItem = this.calculateMax(this.comp);
+//
+//        return res;
+//    }
 
     public T max() {
         return this.maxItem;

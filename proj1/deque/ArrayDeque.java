@@ -138,8 +138,12 @@ public class ArrayDeque<T> implements Deque<T>, Iterable<T> {
 
         T res = this.items[this.last];
         this.items[this.last] = null;
-        this.last = (this.last - 1) % this.cap;
         this.size--;
+        this.last--;
+
+        if (this.last < 0) {
+            this.last += this.cap;
+        }
 
         return res;
     }
