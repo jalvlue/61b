@@ -115,7 +115,7 @@ public class ArrayDeque<T> implements Deque<T> {
 
         T res = this.items[this.first];
         this.items[this.first] = null;
-        this.first++;
+        this.first = (this.first + 1) % this.cap;
         this.size--;
 
         return res;
