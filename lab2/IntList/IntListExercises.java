@@ -33,7 +33,9 @@ public class IntListExercises {
         }
     }
 
-    /** Returns the max value in the IntList starting at L. */
+    /**
+     * Returns the max value in the IntList starting at L.
+     */
     public static int max(IntList L) {
         int max = L.first;
         IntList p = L.rest;
