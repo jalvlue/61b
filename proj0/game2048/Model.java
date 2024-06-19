@@ -6,17 +6,25 @@ import java.util.Observable;
 
 /**
  * The state of a game of 2048.
- * 
+ *
  * @author jalvlue
  */
 public class Model extends Observable {
-    /** Current contents of the board. */
+    /**
+     * Current contents of the board.
+     */
     private Board board;
-    /** Current score. */
+    /**
+     * Current score.
+     */
     private int score;
-    /** Maximum score so far. Updated when game ends. */
+    /**
+     * Maximum score so far. Updated when game ends.
+     */
     private int maxScore;
-    /** True iff game is ended. */
+    /**
+     * True iff game is ended.
+     */
     private boolean gameOver;
 
     /*
@@ -25,7 +33,9 @@ public class Model extends Observable {
      * to board.tile(c, r). Be careful! It works like (x, y) coordinates.
      */
 
-    /** Largest piece value. */
+    /**
+     * Largest piece value.
+     */
     public static final int MAX_PIECE = 2048;
 
     /**
@@ -33,9 +43,10 @@ public class Model extends Observable {
      * and score 0.
      */
     public Model(int size) {
-        board = new Board(size);
-        score = maxScore = 0;
-        gameOver = false;
+        this.board = new Board(size);
+        this.score = 0;
+        this.maxScore = 0;
+        this.gameOver = false;
     }
 
     /**
@@ -45,7 +56,7 @@ public class Model extends Observable {
      */
     public Model(int[][] rawValues, int score, int maxScore, boolean gameOver) {
         int size = rawValues.length;
-        board = new Board(rawValues, score);
+        this.board = new Board(rawValues, score);
         this.score = score;
         this.maxScore = maxScore;
         this.gameOver = gameOver;
@@ -57,7 +68,7 @@ public class Model extends Observable {
      * Used for testing. Should be deprecated and removed.
      */
     public Tile tile(int col, int row) {
-        return board.tile(col, row);
+        return this.board.tile(col, row);
     }
 
     /**
@@ -65,7 +76,7 @@ public class Model extends Observable {
      * Used for testing. Should be deprecated and removed.
      */
     public int size() {
-        return board.size();
+        return this.board.size();
     }
 
     /**
@@ -74,27 +85,33 @@ public class Model extends Observable {
      */
     public boolean gameOver() {
         checkGameOver();
-        if (gameOver) {
-            maxScore = Math.max(score, maxScore);
+        if (this.gameOver) {
+            this.maxScore = Math.max(this.score, this.maxScore);
         }
-        return gameOver;
+        return this.gameOver;
     }
 
-    /** Return the current score. */
+    /**
+     * Return the current score.
+     */
     public int score() {
-        return score;
+        return this.score;
     }
 
-    /** Return the current maximum game score (updated at end of game). */
+    /**
+     * Return the current maximum game score (updated at end of game).
+     */
     public int maxScore() {
-        return maxScore;
+        return this.maxScore;
     }
 
-    /** Clear the board to empty and reset the score. */
+    /**
+     * Clear the board to empty and reset the score.
+     */
     public void clear() {
-        score = 0;
-        gameOver = false;
-        board.clear();
+        this.score = 0;
+        this.gameOver = false;
+        this.board.clear();
         setChanged();
     }
 
@@ -110,7 +127,7 @@ public class Model extends Observable {
 
     /**
      * Tilt the board toward SIDE. Return true iff this changes the board.
-     *
+     * <p>
      * 1. If two Tile objects are adjacent in the direction of motion and have
      * the same value, they are merged into one Tile of twice the original
      * value and that new value is added to the score instance variable
@@ -129,11 +146,7 @@ public class Model extends Observable {
         // for the tilt to the Side SIDE. If the board changed, set the
         // changed local variable to true.
 
-        if (side == Side.EAST) {
-            this.board.setViewingPerspective(side);
-        } else if (side == Side.SOUTH) {
-            this.board.setViewingPerspective(side);
-        } else if (side == Side.WEST) {
+        if (side != Side.NORTH) {
             this.board.setViewingPerspective(side);
         }
 
@@ -141,13 +154,13 @@ public class Model extends Observable {
 
         int len = this.board.size();
         for (int col = 0; col < len; col++) {
-            System.out.println("DEBUG" + col);
             this.score += handleCol(col);
         }
 
         int[][] after = getValues();
-        outerLoop: for (int i = 0; i < this.board.size(); i++) {
-            for (int j = 0; j < this.board.size(); j++) {
+        outerLoop:
+        for (int i = 0; i < len; i++) {
+            for (int j = 0; j < len; j++) {
                 if (before[i][j] != after[i][j]) {
                     changed = true;
                     break outerLoop;
@@ -233,7 +246,9 @@ public class Model extends Observable {
         gameOver = checkGameOver(board);
     }
 
-    /** Determine whether game is over. */
+    /**
+     * Determine whether game is over.
+     */
     private static boolean checkGameOver(Board b) {
         return maxTileExists(b) || !atLeastOneMoveExists(b);
     }
@@ -312,8 +327,8 @@ public class Model extends Observable {
     }
 
     private static Tile[] getNeighborTiles(Board b, int size, int row, int col) {
-        int[] rowNeighbor = new int[] { row, row, row + 1, row - 1 };
-        int[] colNeighbor = new int[] { col - 1, col + 1, col, col };
+        int[] rowNeighbor = new int[]{row, row, row + 1, row - 1};
+        int[] colNeighbor = new int[]{col - 1, col + 1, col, col};
 
         ArrayList<Tile> res = new ArrayList<>();
         for (int index = 0; index < size; index++) {
