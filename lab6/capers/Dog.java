@@ -59,8 +59,8 @@ public class Dog implements Serializable {
      * Increases a dog's age and celebrates!
      */
     public void haveBirthday() {
-        age += 1;
-        System.out.println(toString());
+        this.age += 1;
+        System.out.println(this.toString());
         System.out.println("Happy birthday! Woof! Woof!");
     }
 
