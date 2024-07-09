@@ -1,9 +1,6 @@
 package hashmap;
 
-import java.util.Collection;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.Set;
+import java.util.*;
 
 /**
  * A hash table-backed Map implementation. Provides amortized constant time
@@ -29,23 +26,27 @@ public class MyHashMap<K, V> implements Map61B<K, V> {
         }
     }
 
+    private final int RESIZE_FACTOR = 2;
+    private final int NUM_DEFAULT_BUCKET = 16;
+    private final double DEFAULT_LOAD_FACTOR = 16;
+
     /* Instance Variables */
     private Collection<Node>[] buckets;
-    private int numBuckets = 16;
     private int numItems = 0;
-    private double loadFactor = 0.75;
+    private int numBuckets = NUM_DEFAULT_BUCKET;
+    private double loadFactor = DEFAULT_LOAD_FACTOR;
     // You should probably define some more!
 
     /**
      * Constructors
      */
     public MyHashMap() {
-        this.buckets = new Collection[this.numBuckets];
+        this.buckets = this.setupBuckets(this.numBuckets);
     }
 
     public MyHashMap(int initialSize) {
-        this.buckets = new Collection[initialSize];
         this.numBuckets = initialSize;
+        this.buckets = this.setupBuckets(initialSize);
     }
 
     /**
@@ -56,16 +57,25 @@ public class MyHashMap<K, V> implements Map61B<K, V> {
      * @param maxLoad     maximum load factor
      */
     public MyHashMap(int initialSize, double maxLoad) {
-        this.buckets = new Collection[initialSize];
         this.numBuckets = initialSize;
         this.loadFactor = maxLoad;
+        this.buckets = this.setupBuckets(initialSize);
+    }
+
+    private Collection[] setupBuckets(int numBuckets) {
+        Collection<Node>[] buckets = new Collection[numBuckets];
+        for (int i = 0; i < numBuckets; i++) {
+            buckets[i] = this.createBucket();
+        }
+
+        return buckets;
     }
 
     /**
      * Returns a new node to be placed in a hash table bucket
      */
     private Node createNode(K key, V value) {
-        return null;
+        return new Node(key, value);
     }
 
     /**
@@ -87,7 +97,7 @@ public class MyHashMap<K, V> implements Map61B<K, V> {
      * OWN BUCKET DATA STRUCTURES WITH THE NEW OPERATOR!
      */
     protected Collection<Node> createBucket() {
-        return null;
+        return new ArrayList<>();
     }
 
     /**
@@ -100,22 +110,26 @@ public class MyHashMap<K, V> implements Map61B<K, V> {
      * @param tableSize the size of the table to create
      */
     private Collection<Node>[] createTable(int tableSize) {
+        // TODO: figure out what this method does
         return null;
     }
 
     // TODO: Implement the methods of the Map61B Interface below
     // Your code won't compile until you do so!
 
-    private double getCurrentLoadFactor() {
-        return (double) this.numItems / this.numBuckets;
-    }
 
     /**
      * Removes all of the mappings from this map.
      */
     @Override
     public void clear() {
+        this.numItems = 0;
+        this.numBuckets = NUM_DEFAULT_BUCKET;
+        this.buckets = this.setupBuckets(this.numBuckets);
+    }
 
+    private int getBucketOffset(int keyHashCode, int numBuckets) {
+        return Math.floorMod(keyHashCode, numBuckets);
     }
 
     /**
@@ -123,7 +137,9 @@ public class MyHashMap<K, V> implements Map61B<K, V> {
      */
     @Override
     public boolean containsKey(K key) {
-        return false;
+        V val = this.get(key);
+
+        return val != null;
     }
 
     /**
@@ -132,6 +148,19 @@ public class MyHashMap<K, V> implements Map61B<K, V> {
      */
     @Override
     public V get(K key) {
+        int bucketOffset = this.getBucketOffset(key.hashCode(), this.numBuckets);
+        Node keyNode = this.getNode(key, this.buckets[bucketOffset]);
+
+        return keyNode == null ? null : keyNode.value;
+    }
+
+    private Node getNode(K key, Collection<Node> bucket) {
+        for (Node n : bucket) {
+            if (n.key.equals(key)) {
+                return n;
+            }
+        }
+
         return null;
     }
 
@@ -140,7 +169,37 @@ public class MyHashMap<K, V> implements Map61B<K, V> {
      */
     @Override
     public int size() {
-        return 0;
+        return this.numItems;
+    }
+
+    private double calculateCurrentLoadFactor() {
+        return (double) this.numItems / this.numBuckets;
+    }
+
+    private void resize() {
+        int newNumBuckets = this.numBuckets * this.RESIZE_FACTOR;
+        Collection<Node>[] newBuckets = this.setupBuckets(newNumBuckets);
+
+        Iterator<K> iter = new HashIterator();
+        while (iter.hasNext()) {
+            K key = iter.next();
+            V val = this.get(key);
+
+            int newBucketOffset = this.getBucketOffset(key.hashCode(), newNumBuckets);
+            this.bucketAddNode(newBuckets[newBucketOffset], new Node(key, val));
+        }
+
+        this.buckets = newBuckets;
+        this.numBuckets = newNumBuckets;
+    }
+
+    private void bucketAddNode(Collection<Node> bucket, Node node) {
+        bucket.add(node);
+    }
+
+    private void myPut(Node node) {
+        int bucketOffset = this.getBucketOffset(node.key.hashCode(), this.numBuckets);
+        this.bucketAddNode(this.buckets[bucketOffset], node);
     }
 
     /**
@@ -150,19 +209,54 @@ public class MyHashMap<K, V> implements Map61B<K, V> {
      */
     @Override
     public void put(K key, V value) {
-        // TODO:
+
+        // update
+        V oldValue = this.get(key);
+        if (oldValue != null && !oldValue.equals(value)) {
+            int bucketOffset = this.getBucketOffset(key.hashCode(), this.numBuckets);
+            for (Node node : this.buckets[bucketOffset]) {
+                if (node.key.equals(key)) {
+                    node.value = value;
+                    return;
+                }
+            }
+            // TODO: maybe delete this early return
+            return;
+        }
+
+        this.numItems += 1;
+        double newLoadFactor = this.calculateCurrentLoadFactor();
+        if (newLoadFactor > this.loadFactor) {
+            this.resize();
+        }
+
+        this.myPut(new Node(key, value));
     }
 
-    // TODO:
     private class HashIterator implements Iterator<K> {
+        private int currCount = 0;
+        private int bucketOffset = 0;
+        private final int iterNumItems = numItems;
+        private Iterator<Node> bucketIter = buckets[this.bucketOffset].iterator();
+
         @Override
         public boolean hasNext() {
-            return false;
+            return this.currCount < this.iterNumItems;
         }
 
         @Override
         public K next() {
-            return null;
+            this.currCount += 1;
+            if (this.bucketIter.hasNext()) {
+                return bucketIter.next().key;
+            }
+
+            do {
+                bucketOffset += 1;
+            } while (buckets[this.bucketOffset].isEmpty());
+
+            bucketIter = buckets[this.bucketOffset].iterator();
+            return bucketIter.next().key;
         }
     }
 
@@ -177,6 +271,11 @@ public class MyHashMap<K, V> implements Map61B<K, V> {
     @Override
     public Set<K> keySet() {
         HashSet<K> keys = new HashSet<>();
+        Iterator<K> iter = new HashIterator();
+
+        while (iter.hasNext()) {
+            keys.add(iter.next());
+        }
 
         return keys;
     }
