@@ -137,6 +137,10 @@ public class MyHashMap<K, V> implements Map61B<K, V> {
      */
     @Override
     public boolean containsKey(K key) {
+        if (key == null) {
+            throw new IllegalArgumentException();
+        }
+
         V val = this.get(key);
 
         return val != null;
@@ -148,6 +152,10 @@ public class MyHashMap<K, V> implements Map61B<K, V> {
      */
     @Override
     public V get(K key) {
+        if (key == null) {
+            throw new IllegalArgumentException();
+        }
+
         int bucketOffset = this.getBucketOffset(key.hashCode(), this.numBuckets);
         Node keyNode = this.getNode(key, this.buckets[bucketOffset]);
 
@@ -209,6 +217,9 @@ public class MyHashMap<K, V> implements Map61B<K, V> {
      */
     @Override
     public void put(K key, V value) {
+        if (key == null) {
+            throw new IllegalArgumentException();
+        }
 
         // this kv has already exists
         V oldValue = this.get(key);
@@ -231,9 +242,7 @@ public class MyHashMap<K, V> implements Map61B<K, V> {
             this.resize();
         }
 
-        this.
-
-                myPut(new Node(key, value));
+        this.myPut(new Node(key, value));
         this.numItems += 1;
     }
 
