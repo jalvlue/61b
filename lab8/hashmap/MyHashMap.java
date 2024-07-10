@@ -28,7 +28,7 @@ public class MyHashMap<K, V> implements Map61B<K, V> {
 
     private final int RESIZE_FACTOR = 2;
     private final int NUM_DEFAULT_BUCKET = 16;
-    private final double DEFAULT_LOAD_FACTOR = 16;
+    private final double DEFAULT_LOAD_FACTOR = 0.75;
 
     /* Instance Variables */
     private Collection<Node>[] buckets;
@@ -210,34 +210,45 @@ public class MyHashMap<K, V> implements Map61B<K, V> {
     @Override
     public void put(K key, V value) {
 
-        // update
+        // this kv has already exists
         V oldValue = this.get(key);
-        if (oldValue != null && !oldValue.equals(value)) {
-            int bucketOffset = this.getBucketOffset(key.hashCode(), this.numBuckets);
-            for (Node node : this.buckets[bucketOffset]) {
-                if (node.key.equals(key)) {
-                    node.value = value;
-                    return;
+        if (oldValue != null) {
+            // put different value, update
+            if (!oldValue.equals(value)) {
+                int bucketOffset = this.getBucketOffset(key.hashCode(), this.numBuckets);
+                for (Node node : this.buckets[bucketOffset]) {
+                    if (node.key.equals(key)) {
+                        node.value = value;
+                        return;
+                    }
                 }
             }
-            // TODO: maybe delete this early return
             return;
         }
 
-        this.numItems += 1;
         double newLoadFactor = this.calculateCurrentLoadFactor();
         if (newLoadFactor > this.loadFactor) {
             this.resize();
         }
 
-        this.myPut(new Node(key, value));
+        this.
+
+                myPut(new Node(key, value));
+        this.numItems += 1;
     }
 
     private class HashIterator implements Iterator<K> {
-        private int currCount = 0;
-        private int bucketOffset = 0;
-        private final int iterNumItems = numItems;
-        private Iterator<Node> bucketIter = buckets[this.bucketOffset].iterator();
+        private int currCount;
+        private int bucketOffset;
+        private int iterNumItems;
+        private Iterator<Node> bucketIter;
+
+        public HashIterator() {
+            this.currCount = 0;
+            this.bucketOffset = 0;
+            this.iterNumItems = numItems;
+            this.bucketIter = buckets[this.bucketOffset].iterator();
+        }
 
         @Override
         public boolean hasNext() {
