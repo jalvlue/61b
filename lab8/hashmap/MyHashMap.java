@@ -307,7 +307,19 @@ public class MyHashMap<K, V> implements Map61B<K, V> {
      */
     @Override
     public V remove(K key) {
-        throw new UnsupportedOperationException();
+        if (key == null) {
+            throw new IllegalArgumentException();
+        }
+
+        int bucketOffset = this.getBucketOffset(key.hashCode(), this.numBuckets);
+        Node node = this.getNode(key, this.buckets[bucketOffset]);
+        if (node == null) {
+            return null;
+        }
+
+        this.removeNode(node, bucketOffset);
+
+        return node.value;
     }
 
     /**
@@ -317,6 +329,24 @@ public class MyHashMap<K, V> implements Map61B<K, V> {
      */
     @Override
     public V remove(K key, V value) {
-        throw new UnsupportedOperationException();
+        if (key == null) {
+            throw new IllegalArgumentException();
+        }
+
+        int bucketOffset = this.getBucketOffset(key.hashCode(), this.numBuckets);
+        Node node = this.getNode(key, this.buckets[bucketOffset]);
+        if (node == null) {
+            return value;
+        }
+        if (node.value.equals(value)) {
+            this.removeNode(node, bucketOffset);
+        }
+
+        return value;
+    }
+
+    private void removeNode(Node node, int bucketOffset) {
+        this.buckets[bucketOffset].remove(node);
+        this.numItems -= 1;
     }
 }
